@@ -25,6 +25,8 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public final class Window {
 
+    private static float delta;
+
     /**
      * The width of the screen
      */
@@ -113,7 +115,7 @@ public final class Window {
         //Make the OpenGL context current
         glfwMakeContextCurrent(glfwWindow);
         //Enable v-sync
-        glfwSwapInterval(1);
+        glfwSwapInterval(0);
 
         //Make the window visible
         glfwShowWindow(glfwWindow);
@@ -198,6 +200,7 @@ public final class Window {
 
             if (time + 1000 <= System.currentTimeMillis()) {
                 System.out.println(frames + " fps");
+                delta = 60f / frames;
                 frames = 0;
                 time = System.currentTimeMillis();
             }
@@ -205,6 +208,10 @@ public final class Window {
 
         Loader.cleanUp();
 
+    }
+
+    public static float getFrameTimeSeconds() {
+        return delta;
     }
 
 }
