@@ -1,6 +1,6 @@
 import org.minecraft.Window;
 
-public class Main {
+public final class Main {
 
     public static void main(String[] args) {
         Window window = Window.get();

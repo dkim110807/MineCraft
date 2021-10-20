@@ -4,11 +4,12 @@ import java.io.Serializable;
 import java.nio.FloatBuffer;
 
 public abstract class Vector implements Serializable, ReadableVector {
+
     protected Vector() {
     }
 
     public final float length() {
-        return (float)Math.sqrt((double)this.lengthSquared());
+        return (float) Math.sqrt((double) this.lengthSquared());
     }
 
     public abstract float lengthSquared();

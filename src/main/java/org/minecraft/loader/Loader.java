@@ -15,8 +15,9 @@ public final class Loader {
 
     private static final List<Integer> vaos = new ArrayList<>();
     private static final List<Integer> vbos = new ArrayList<>();
+    private static final List<Integer> textures = new ArrayList<>();
 
-    public static RawModel loadToVao(float[] vertices, float[] color, int[] indices) {
+    public static RawModel loadToVao(float[] vertices, float[] color, float[] tcs, int[] indices) {
         //Creates vao
         int vao = glGenVertexArrays();
 
@@ -29,6 +30,8 @@ public final class Loader {
         storeDataInVertexBufferObject(vertices, 0, 3);
         //Store the color array to vbo 1
         storeDataInVertexBufferObject(color, 1, 4);
+        //Store the texture coordinate array to vbo 2
+        storeDataInVertexBufferObject(tcs, 2, 2);
         bindIndicesBuffer(indices);
 
         return new RawModel(vao, indices.length);

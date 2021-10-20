@@ -1,5 +1,6 @@
 package org.minecraft.util.matrix;
 
+import org.minecraft.Window;
 import org.minecraft.entity.Camera;
 import org.minecraft.util.vector.Matrix4f;
 import org.minecraft.util.vector.Vector2f;
@@ -41,7 +42,7 @@ public final class MatrixUtils {
 
         Matrix4f matrix = new Matrix4f();
 
-        float aspect = 1280f / 720f;
+        float aspect = Window.getWidth() / (float) Window.getHeight();
         float yScale = 1f / (float) Math.tan(Math.toRadians(FOV / 2f));
         float xScale = yScale / aspect;
         float zp = FAR + NEAR;

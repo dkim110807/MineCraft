@@ -1,9 +1,12 @@
 package org.minecraft.util.vector;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.nio.FloatBuffer;
 
-public class Vector3f extends Vector implements Serializable, ReadableVector3f, WritableVector3f {
+public final class Vector3f extends Vector implements Serializable, ReadableVector3f, WritableVector3f {
+
+    @Serial
     private static final long serialVersionUID = 1L;
     public float x;
     public float y;
@@ -117,7 +120,7 @@ public class Vector3f extends Vector implements Serializable, ReadableVector3f, 
             dls = 1.0F;
         }
 
-        return (float)Math.acos((double)dls);
+        return (float) Math.acos((double) dls);
     }
 
     public Vector load(FloatBuffer buf) {
@@ -185,7 +188,7 @@ public class Vector3f extends Vector implements Serializable, ReadableVector3f, 
         } else if (this.getClass() != obj.getClass()) {
             return false;
         } else {
-            Vector3f other = (Vector3f)obj;
+            Vector3f other = (Vector3f) obj;
             return this.x == other.x && this.y == other.y && this.z == other.z;
         }
     }

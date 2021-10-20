@@ -1,6 +1,5 @@
 package org.minecraft;
 
-import org.minecraft.util.vector.Vector3f;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -8,13 +7,17 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.Callback;
 import org.minecraft.entity.Camera;
+import org.minecraft.gui.ImGUI;
 import org.minecraft.listener.Keyboard;
 import org.minecraft.listener.Mouse;
 import org.minecraft.loader.Loader;
 import org.minecraft.models.RawModel;
+import org.minecraft.models.TexturedModel;
 import org.minecraft.render.QuadRender;
 import org.minecraft.shader.Shader;
+import org.minecraft.texture.Texture;
 import org.minecraft.util.matrix.MatrixUtils;
+import org.minecraft.util.vector.Vector3f;
 
 import java.util.Objects;
 
@@ -44,6 +47,8 @@ public final class Window {
      * The window
      */
     private long glfwWindow;
+
+    private ImGUI imgui;
 
     /**
      * The game window
@@ -111,6 +116,10 @@ public final class Window {
         glfwSetMouseButtonCallback(glfwWindow, Mouse::mouseButtonCallback);
         glfwSetScrollCallback(glfwWindow, Mouse::mouseScrollCallback);
         glfwSetKeyCallback(glfwWindow, Keyboard::keyCallback);
+        glfwSetWindowSizeCallback(glfwWindow,(w,newWidth,newHeight) -> {
+            Window.setWidth(newWidth);
+            Window.setHeight(newHeight);
+        });
 
         //Make the OpenGL context current
         glfwMakeContextCurrent(glfwWindow);
@@ -130,6 +139,9 @@ public final class Window {
         glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
         Callback debugProc = GLUtil.setupDebugMessageCallback();
+
+        imgui = new ImGUI(glfwWindow);
+        imgui.init();
     }
 
     //The game loop
@@ -163,37 +175,49 @@ public final class Window {
                 1.0f, 0.0f, 1.0f, 1.0f
         };
 
+        float[] textures = new float[]{
+                //Bottom Left
+                1.0f, 1.0f,
+
+                //Top Left
+                0.0f, 0.0f,
+
+                //Top Right
+                1.0f, 0.0f,
+
+                //Bottom Right
+                0.0f, 1.0f
+        };
+
         //IMPORTANT : Must be in counter - clock wise order
         int[] indices = new int[]{
                 2, 1, 0,          //Top Right Triangle
                 0, 1, 3,          //Bottom Left Triangle
         };
 
-        RawModel model = Loader.loadToVao(vertices, color, indices);
+        TexturedModel model = new TexturedModel(Loader.loadToVao(vertices, color, textures, indices),new Texture("assets/textures/dirt.png"));
         Camera camera = new Camera(new Vector3f(0, 0, 0), new Vector3f(0, 0, 0));
 
         long time = System.currentTimeMillis();
         int frames = 0;
 
-
         Shader shader = QuadRender.shader;
         shader.enable();
         shader.setUniformMat4f("pr_matrix", MatrixUtils.createProjectionMatrix());
+        shader.setUniform1i("tex", 0);
         shader.disable();
 
         glClearColor(0.1f, 0.8f, 1.0f, 1.0f);
+        glEnable(GL_DEPTH_TEST);
 
         while (!glfwWindowShouldClose(glfwWindow)) {
-            glClear(GL_COLOR_BUFFER_BIT);
-
             //Poll Events
-            Mouse.refresh();
             glfwPollEvents();
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
             camera.move();
 
-            QuadRender.render(camera,model);
-
-            glfwSwapBuffers(glfwWindow);
+            QuadRender.render(camera, model);
 
             //FPS Counter
             frames++;
@@ -204,6 +228,10 @@ public final class Window {
                 frames = 0;
                 time = System.currentTimeMillis();
             }
+
+            //imgui.update(1f / frames);
+            glfwSwapBuffers(glfwWindow);
+            Mouse.refresh();
         }
 
         Loader.cleanUp();
@@ -212,6 +240,22 @@ public final class Window {
 
     public static float getFrameTimeSeconds() {
         return delta;
+    }
+
+    public static int getWidth() {
+        return get().width;
+    }
+
+    public static int getHeight() {
+        return get().height;
+    }
+
+    public static void setWidth(int width) {
+        get().width = width;
+    }
+
+    public static void setHeight(int height) {
+        get().height = height;
     }
 
 }

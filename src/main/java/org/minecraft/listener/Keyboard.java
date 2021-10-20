@@ -1,13 +1,14 @@
 package org.minecraft.listener;
 
-import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
-import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
+import java.util.Arrays;
+
+import static org.lwjgl.glfw.GLFW.*;
 
 public final class Keyboard {
 
     private static Keyboard instance;
 
-    private boolean[] keyPressed = new boolean[350];
+    private boolean[] keyPressed = new boolean[GLFW_KEY_LAST];
 
     private Keyboard() {
 
@@ -21,7 +22,10 @@ public final class Keyboard {
     }
 
     public static void keyCallback(long window, int key, int scancode, int action, int mods) {
-        get().keyPressed[key] = (action == GLFW_PRESS);
+        if (action == GLFW_PRESS)
+            get().keyPressed[key] = true;
+        else if (action == GLFW_RELEASE)
+            get().keyPressed[key] = false;
     }
 
     public static boolean isKeyPressed(int key) {

@@ -4,7 +4,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.nio.FloatBuffer;
 
-public class Matrix4f extends Matrix implements Serializable {
+public final class Matrix4f extends Matrix implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

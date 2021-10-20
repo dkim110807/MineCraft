@@ -1,10 +1,14 @@
 package org.minecraft.util.vector;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.nio.FloatBuffer;
 
-public class Vector4f extends Vector implements Serializable, ReadableVector4f, WritableVector4f {
+public final class Vector4f extends Vector implements Serializable, ReadableVector4f, WritableVector4f {
+
+    @Serial
     private static final long serialVersionUID = 1L;
+
     public float x;
     public float y;
     public float z;
