@@ -22,6 +22,7 @@ project.ext.jomlVersion = "1.10.2"
 project.ext.lwjglNatives = "natives-windows"
 
 dependencies {
+    implementation 'org.jetbrains:annotations:20.1.0'
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
     implementation "org.lwjgl:lwjgl"
