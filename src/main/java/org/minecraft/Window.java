@@ -125,6 +125,8 @@ public final class Window {
         // bindings available for use.
         GL.createCapabilities();
 
+        glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
         Callback debugProc = GLUtil.setupDebugMessageCallback();
     }
 
@@ -183,6 +185,7 @@ public final class Window {
             glClear(GL_COLOR_BUFFER_BIT);
 
             //Poll Events
+            Mouse.refresh();
             glfwPollEvents();
             camera.move();
 

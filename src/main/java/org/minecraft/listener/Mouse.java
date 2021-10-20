@@ -38,6 +38,11 @@ public final class Mouse {
         get().isDragging = get().mouseButtonPressed[0] || get().mouseButtonPressed[1] || get().mouseButtonPressed[2];
     }
 
+    public static void refresh() {
+        get().lastX = get().xPos;
+        get().lastY = get().yPos;
+    }
+
     public static void mouseButtonCallback(long window, int button, int action, int mods) {
         get().mouseButtonPressed[button] = action == GLFW_PRESS;
         if (action == GLFW_RELEASE)

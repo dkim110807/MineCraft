@@ -9,7 +9,7 @@ import static org.lwjgl.glfw.GLFW.*;
 public class Camera {
 
     private static final float SPEED = 0.15f;
-    private static final float SENSITIVITY = 0.1f;
+    private static final float SENSITIVITY = 0.5f;
 
     private Vector3f position, rotation;
 
@@ -29,7 +29,7 @@ public class Camera {
         if (Keyboard.isKeyPressed(GLFW_KEY_SPACE)) position = Vector3f.add(position, new Vector3f(0, SPEED, 0),position);
         if (Keyboard.isKeyPressed(GLFW_KEY_LEFT_SHIFT)) position = Vector3f.add(position, new Vector3f(0, -SPEED, 0),position);
 
-        float dx = Mouse.getDX();
+        float dx = -Mouse.getDX();
         float dy = -Mouse.getDY();
 
         rotation = Vector3f.add(rotation, new Vector3f(dy * SENSITIVITY, dx * SENSITIVITY, 0),rotation);
