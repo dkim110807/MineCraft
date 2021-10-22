@@ -1,12 +1,13 @@
 package org.minecraft.shader;
 
-import org.joml.Vector2f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
+
 import org.minecraft.util.shader.ShaderUtils;
 import org.minecraft.util.vector.Matrix4f;
+import org.minecraft.util.vector.Vector2f;
+import org.minecraft.util.vector.Vector3f;
+import org.minecraft.util.vector.Vector4f;
 
 import java.nio.FloatBuffer;
 import java.util.HashMap;

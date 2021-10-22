@@ -3,26 +3,29 @@ package org.minecraft;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.openal.AL;
+import org.lwjgl.openal.ALC;
+import org.lwjgl.openal.ALCCapabilities;
+import org.lwjgl.openal.ALCapabilities;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.Callback;
+import org.minecraft.audio.Sound;
+import org.minecraft.block.Block;
+import org.minecraft.block.blocks.Dirt;
 import org.minecraft.entity.Camera;
-import org.minecraft.gui.ImGUI;
 import org.minecraft.listener.Keyboard;
 import org.minecraft.listener.Mouse;
 import org.minecraft.loader.Loader;
-import org.minecraft.models.RawModel;
-import org.minecraft.models.TexturedModel;
-import org.minecraft.render.QuadRender;
-import org.minecraft.shader.Shader;
-import org.minecraft.texture.Texture;
-import org.minecraft.util.matrix.MatrixUtils;
 import org.minecraft.util.vector.Vector3f;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.openal.ALC10.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -48,7 +51,8 @@ public final class Window {
      */
     private long glfwWindow;
 
-    private ImGUI imgui;
+    private long audioDevice;
+    private long audioContext;
 
     /**
      * The game window
@@ -77,6 +81,10 @@ public final class Window {
         //Free the memory
         glfwFreeCallbacks(glfwWindow);
         glfwDestroyWindow(glfwWindow);
+
+        //Destroy the audio context
+        alcDestroyContext(audioContext);
+        alcCloseDevice(audioDevice);
 
         //Terminate GLFW and the free the error callback
         glfwTerminate();
@@ -116,7 +124,7 @@ public final class Window {
         glfwSetMouseButtonCallback(glfwWindow, Mouse::mouseButtonCallback);
         glfwSetScrollCallback(glfwWindow, Mouse::mouseScrollCallback);
         glfwSetKeyCallback(glfwWindow, Keyboard::keyCallback);
-        glfwSetWindowSizeCallback(glfwWindow,(w,newWidth,newHeight) -> {
+        glfwSetWindowSizeCallback(glfwWindow, (w, newWidth, newHeight) -> {
             Window.setWidth(newWidth);
             Window.setHeight(newHeight);
         });
@@ -129,6 +137,21 @@ public final class Window {
         //Make the window visible
         glfwShowWindow(glfwWindow);
 
+        //Initial the audio device
+        String defaultDeviceName = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
+        audioDevice = alcOpenDevice(defaultDeviceName);
+
+        int[] attributes = {0};
+        audioContext = alcCreateContext(audioDevice, attributes);
+        alcMakeContextCurrent(audioContext);
+
+        ALCCapabilities alcCapabilities = ALC.createCapabilities(audioDevice);
+        ALCapabilities alCapabilities = AL.createCapabilities(alcCapabilities);
+
+        if (!alCapabilities.OpenAL10) {
+            throw new IllegalStateException("Could not load OpenAL");
+        }
+
         // This line is critical for LWJGL's interoperation with GLFW's
         // OpenGL context, or any context that is managed externally.
         // LWJGL detects the context that is current in the current thread,
@@ -139,9 +162,6 @@ public final class Window {
         glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
         Callback debugProc = GLUtil.setupDebugMessageCallback();
-
-        imgui = new ImGUI(glfwWindow);
-        imgui.init();
     }
 
     //The game loop
@@ -195,17 +215,22 @@ public final class Window {
                 0, 1, 3,          //Bottom Left Triangle
         };
 
-        TexturedModel model = new TexturedModel(Loader.loadToVao(vertices, color, textures, indices),new Texture("assets/textures/dirt.png"));
         Camera camera = new Camera(new Vector3f(0, 0, 0), new Vector3f(0, 0, 0));
 
         long time = System.currentTimeMillis();
         int frames = 0;
 
-        Shader shader = QuadRender.shader;
-        shader.enable();
-        shader.setUniformMat4f("pr_matrix", MatrixUtils.createProjectionMatrix());
-        shader.setUniform1i("tex", 0);
-        shader.disable();
+        Block.prepare();
+
+        Sound sound = new Sound("assets/sounds/Background.ogg",true);
+
+        sound.play();
+
+        List<Block> blocks = new ArrayList<>();
+
+        for (int x = 0; x <= 10; x++)
+            for (int z = 0; z <= 10; z++)
+                blocks.add(new Dirt(x, 0, z));
 
         glClearColor(0.1f, 0.8f, 1.0f, 1.0f);
         glEnable(GL_DEPTH_TEST);
@@ -216,26 +241,26 @@ public final class Window {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             camera.move();
+            Mouse.refresh();
 
-            QuadRender.render(camera, model);
+            blocks.forEach(Block::add);
+            Block.render(camera);
 
             //FPS Counter
             frames++;
 
             if (time + 1000 <= System.currentTimeMillis()) {
                 System.out.println(frames + " fps");
-                delta = 60f / frames;
+                delta = 1f / frames;
                 frames = 0;
                 time = System.currentTimeMillis();
             }
 
-            //imgui.update(1f / frames);
             glfwSwapBuffers(glfwWindow);
-            Mouse.refresh();
         }
 
         Loader.cleanUp();
-
+        Block.cleanUp();
     }
 
     public static float getFrameTimeSeconds() {

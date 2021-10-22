@@ -9,8 +9,8 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class Camera {
 
-    private static final float SPEED = 0.15f;
-    private static final float SENSITIVITY = 0.5f;
+    private static final float SPEED = 0.15f * 60;
+    private static final float SENSITIVITY = 0.5f * 60;
 
     private Vector3f position, rotation;
 
