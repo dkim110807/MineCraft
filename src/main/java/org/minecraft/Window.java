@@ -12,12 +12,15 @@ import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.Callback;
 import org.minecraft.audio.Sound;
 import org.minecraft.block.Block;
+import org.minecraft.block.BlockMesh;
 import org.minecraft.block.blocks.Dirt;
 import org.minecraft.entity.Camera;
 import org.minecraft.listener.Keyboard;
 import org.minecraft.listener.Mouse;
 import org.minecraft.loader.Loader;
 import org.minecraft.util.vector.Vector3f;
+import org.minecraft.world.World;
+import org.minecraft.world.chunk.Chunk;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +33,6 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public final class Window {
-
-    private static float delta;
 
     /**
      * The width of the screen
@@ -58,6 +59,10 @@ public final class Window {
      * The game window
      */
     private static Window window = null;
+
+    private static float delta = 1f;
+
+    private static final List<BlockMesh> meshes = new ArrayList<>();
 
     private Window() {
         this.width = 1280;
@@ -222,20 +227,56 @@ public final class Window {
 
         Block.prepare();
 
-        Sound sound = new Sound("assets/sounds/Background.ogg",true);
-
+        Sound sound = new Sound("assets/sounds/calm3.ogg", true);
         sound.play();
 
-        List<Block> blocks = new ArrayList<>();
 
-        for (int x = 0; x <= 10; x++)
-            for (int z = 0; z <= 10; z++)
-                blocks.add(new Dirt(x, 0, z));
+        World world = new World();
+
+        List<Vector3f> used = new ArrayList<>();
+
+        new Thread(() -> {
+            while (!glfwWindowShouldClose(glfwWindow)) {
+                for (int x = (int) (camera.getPosition().x - World.WORLD_SIZE) / World.CHUNK_SIZE;
+                     x <= (camera.getPosition().x + World.WORLD_SIZE) / World.CHUNK_SIZE; x++) {
+                    for (int z=(int) (camera.getPosition().z - World.WORLD_SIZE) / World.CHUNK_SIZE;
+                         z<=(camera.getPosition().z + World.WORLD_SIZE) / World.CHUNK_SIZE;z++) {
+                        final Vector3f e = new Vector3f(x * World.CHUNK_SIZE, 0, z * World.CHUNK_SIZE);
+                        if (!used.contains(e)) {
+                            used.add(e);
+
+                            List<Block> blocks = new ArrayList<>();
+
+                            for (int i = 0; i < World.CHUNK_SIZE; i++)
+                                for (int j = 0; j < World.CHUNK_SIZE; j++) {
+
+                                    int height = world.getHeightAt(x * World.CHUNK_SIZE + i, z * World.CHUNK_SIZE + j);
+
+                                    blocks.add(new Dirt(i, height, j));
+                                }
+
+                            meshes.add(new BlockMesh(new Chunk(blocks, e)));
+                        }
+                    }
+                }
+            }
+        }).start();
 
         glClearColor(0.1f, 0.8f, 1.0f, 1.0f);
         glEnable(GL_DEPTH_TEST);
 
+        List<Block> blocks = new ArrayList<>();
+
+        int index = 0;
+
         while (!glfwWindowShouldClose(glfwWindow)) {
+
+            if (index < meshes.size()) {
+                BlockMesh mesh = meshes.get(index);
+                blocks.add(new Block(Loader.loadModel(mesh.positions, mesh.tcs, mesh.normals, mesh.indices), mesh.origin));
+                index++;
+            }
+
             //Poll Events
             glfwPollEvents();
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -243,7 +284,15 @@ public final class Window {
             camera.move();
             Mouse.refresh();
 
-            blocks.forEach(Block::add);
+            
+            for (Block block : blocks) {
+                int dx = (int) Math.abs(block.getPosition().x - camera.getPosition().x);
+                int dz = (int) Math.abs(block.getPosition().z - camera.getPosition().z);
+
+                if (dx <= World.WORLD_SIZE && dz <= World.WORLD_SIZE)
+                    block.add();
+            }
+            
             Block.render(camera);
 
             //FPS Counter

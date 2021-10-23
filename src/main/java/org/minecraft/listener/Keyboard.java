@@ -1,7 +1,5 @@
 package org.minecraft.listener;
 
-import java.util.Arrays;
-
 import static org.lwjgl.glfw.GLFW.*;
 
 public final class Keyboard {
@@ -22,6 +20,9 @@ public final class Keyboard {
     }
 
     public static void keyCallback(long window, int key, int scancode, int action, int mods) {
+        if (key == GLFW_KEY_UNKNOWN)
+            return;
+
         if (action == GLFW_PRESS)
             get().keyPressed[key] = true;
         else if (action == GLFW_RELEASE)

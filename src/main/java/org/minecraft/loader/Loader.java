@@ -2,6 +2,8 @@ package org.minecraft.loader;
 
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
+import org.minecraft.block.BlockModel;
+import org.minecraft.block.BlockTexture;
 import org.minecraft.models.RawModel;
 import org.minecraft.util.buffer.BufferUtils;
 
@@ -35,6 +37,26 @@ public final class Loader {
         bindIndicesBuffer(indices);
 
         return new RawModel(vao, indices.length);
+    }
+
+    public static BlockModel loadModel(float[] vertices, float[] tcs, float[] normals, int[] indices) {
+        //Creates vao
+        int vao = glGenVertexArrays();
+
+        vaos.add(vao);
+
+        //Bind the vertex array
+        glBindVertexArray(vao);
+
+        //Store the vertices array to vbo 0
+        storeDataInVertexBufferObject(vertices, 0, 3);
+        //Store the color array to vbo 1
+        storeDataInVertexBufferObject(tcs, 1, 2);
+        //Store the texture coordinate array to vbo 2
+        storeDataInVertexBufferObject(normals, 2, 3);
+        bindIndicesBuffer(indices);
+
+        return new BlockModel(vao, indices.length, new BlockTexture("assets/textures/texture.png"));
     }
 
     private static void storeDataInVertexBufferObject(float[] data, int index, int dimensions) {

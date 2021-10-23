@@ -39,40 +39,40 @@ public class Block extends GameObject implements BlockI, Serializable {
      */
     protected static final float[] VERTICES = new float[]{
             //Positive X
-            -0.5f, 0.5f, -0.5f,
-            -0.5f, -0.5f, -0.5f,
-            0.5f, -0.5f, -0.5f,
             0.5f, 0.5f, -0.5f,
-
-            //Negative X
-            -0.5f, 0.5f, 0.5f,
-            -0.5f, -0.5f, 0.5f,
+            0.5f, -0.5f, -0.5f,
             0.5f, -0.5f, 0.5f,
             0.5f, 0.5f, 0.5f,
 
+            //Negative X
+            -0.5f, 0.5f, -0.5f,
+            -0.5f, -0.5f, -0.5f,
+            -0.5f, -0.5f, 0.5f,
+            -0.5f, 0.5f, 0.5f,
+
             //Positive Y
+            -0.5f, 0.5f, 0.5f,
+            -0.5f, 0.5f, -0.5f,
             0.5f, 0.5f, -0.5f,
-            0.5f, -0.5f, -0.5f,
-            0.5f, -0.5f, 0.5f,
             0.5f, 0.5f, 0.5f,
 
             //Negative Y
-            -0.5f, 0.5f, -0.5f,
-            -0.5f, -0.5f, -0.5f,
-            -0.5f, -0.5f, 0.5f,
-            -0.5f, 0.5f, 0.5f,
-
-            //Positive Z
-            -0.5f, 0.5f, 0.5f,
-            -0.5f, 0.5f, -0.5f,
-            0.5f, 0.5f, -0.5f,
-            0.5f, 0.5f, 0.5f,
-
-            //Negative Z
             -0.5f, -0.5f, 0.5f,
             -0.5f, -0.5f, -0.5f,
             0.5f, -0.5f, -0.5f,
-            0.5f, -0.5f, 0.5f
+            0.5f, -0.5f, 0.5f,
+
+            //Positive Z
+            -0.5f, 0.5f, 0.5f,
+            -0.5f, -0.5f, 0.5f,
+            0.5f, -0.5f, 0.5f,
+            0.5f, 0.5f, 0.5f,
+
+            //Negative Z
+            -0.5f, 0.5f, -0.5f,
+            -0.5f, -0.5f, -0.5f,
+            0.5f, -0.5f, -0.5f,
+            0.5f, 0.5f, -0.5f
     };
 
     /**

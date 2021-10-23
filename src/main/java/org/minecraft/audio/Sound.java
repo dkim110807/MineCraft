@@ -57,8 +57,8 @@ public final class Sound {
 
         alSourcei(sourceID, AL_BUFFER, bufferID);
         alSourcei(sourceID, AL_LOOPING, loops ? 1 : 0);
-        alSourcei(sourceID, AL_POSITION, 0);
-        alSourcef(sourceID, AL_GAIN, 0.3f);
+        alSourcef(sourceID, AL_GAIN, 1f);
+        alSource3f(sourceID,AL_POSITION,0,0,0);
 
         //Free the raw audio buffer
         free(rawAudioBuffer);

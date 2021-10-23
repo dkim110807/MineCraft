@@ -11,7 +11,7 @@ uniform mat4 tr_matrix;
 uniform mat4 pr_matrix;
 uniform mat4 vw_matrix;
 
-const float density = 0.02;
+const float density = 1;
 const float gradient = 1.5;
 
 void main() {
@@ -20,7 +20,7 @@ void main() {
     gl_Position = pr_matrix * positionRelativeToCam;
     pass_tcs = tcs;
 
-    float distance = length(positionRelativeToCam.xyz);
+    float distance = length(positionRelativeToCam.xyz) / 30;
     visibility = exp(-pow((distance * density), gradient));
     visibility = clamp(visibility, 0.0, 1.0);
 }

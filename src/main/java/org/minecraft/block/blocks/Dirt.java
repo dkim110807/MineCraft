@@ -268,6 +268,11 @@ public final class Dirt extends Block implements Serializable {
         return TCS;
     }
 
+    @Override
+    public float[] getVertices() {
+        return VERTICES;
+    }
+
     /**
      * Indicates whether some other object is "equal to" this one.
      * <p>
