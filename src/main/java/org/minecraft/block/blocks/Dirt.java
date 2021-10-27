@@ -268,6 +268,12 @@ public final class Dirt extends Block implements Serializable {
         return TCS;
     }
 
+    /**
+     * Returns the vertices of this block
+     *
+     * @return The vertices of this block
+     * @author 4347
+     */
     @Override
     public float[] getVertices() {
         return VERTICES;

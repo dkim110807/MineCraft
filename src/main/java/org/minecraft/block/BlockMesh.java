@@ -308,7 +308,7 @@ public final class BlockMesh implements Serializable {
 
 }
 
-class Vertex {
+final class Vertex {
 
     public Vector3f position;
     public Vector2f texture;

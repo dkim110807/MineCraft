@@ -2,7 +2,7 @@ package org.minecraft.world;
 
 import java.util.Random;
 
-public final class PerlinNoise {
+final class PerlinNoise {
 
     public static final float AMPLITUDE = 80f;
     public static final int OCTAVES = 8;

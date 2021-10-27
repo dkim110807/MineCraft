@@ -55,6 +55,8 @@ public final class Window {
     private long audioDevice;
     private long audioContext;
 
+    private boolean close = false;
+
     /**
      * The game window
      */
@@ -137,7 +139,7 @@ public final class Window {
         //Make the OpenGL context current
         glfwMakeContextCurrent(glfwWindow);
         //Enable v-sync
-        glfwSwapInterval(0);
+        glfwSwapInterval(1);
 
         //Make the window visible
         glfwShowWindow(glfwWindow);
@@ -236,11 +238,11 @@ public final class Window {
         List<Vector3f> used = new ArrayList<>();
 
         new Thread(() -> {
-            while (!glfwWindowShouldClose(glfwWindow)) {
+            while (!close) {
                 for (int x = (int) (camera.getPosition().x - World.WORLD_SIZE) / World.CHUNK_SIZE;
                      x <= (camera.getPosition().x + World.WORLD_SIZE) / World.CHUNK_SIZE; x++) {
-                    for (int z=(int) (camera.getPosition().z - World.WORLD_SIZE) / World.CHUNK_SIZE;
-                         z<=(camera.getPosition().z + World.WORLD_SIZE) / World.CHUNK_SIZE;z++) {
+                    for (int z = (int) (camera.getPosition().z - World.WORLD_SIZE) / World.CHUNK_SIZE;
+                         z <= (camera.getPosition().z + World.WORLD_SIZE) / World.CHUNK_SIZE; z++) {
                         final Vector3f e = new Vector3f(x * World.CHUNK_SIZE, 0, z * World.CHUNK_SIZE);
                         if (!used.contains(e)) {
                             used.add(e);
@@ -271,6 +273,9 @@ public final class Window {
 
         while (!glfwWindowShouldClose(glfwWindow)) {
 
+            if (Keyboard.isKeyPressed(GLFW_KEY_ESCAPE))
+                break;
+
             if (index < meshes.size()) {
                 BlockMesh mesh = meshes.get(index);
                 blocks.add(new Block(Loader.loadModel(mesh.positions, mesh.tcs, mesh.normals, mesh.indices), mesh.origin));
@@ -284,7 +289,7 @@ public final class Window {
             camera.move();
             Mouse.refresh();
 
-            
+
             for (Block block : blocks) {
                 int dx = (int) Math.abs(block.getPosition().x - camera.getPosition().x);
                 int dz = (int) Math.abs(block.getPosition().z - camera.getPosition().z);
@@ -292,7 +297,7 @@ public final class Window {
                 if (dx <= World.WORLD_SIZE && dz <= World.WORLD_SIZE)
                     block.add();
             }
-            
+
             Block.render(camera);
 
             //FPS Counter
@@ -310,6 +315,7 @@ public final class Window {
 
         Loader.cleanUp();
         Block.cleanUp();
+        close = true;
     }
 
     public static float getFrameTimeSeconds() {
