@@ -4,7 +4,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Pair<F,S> implements Serializable {
+public final class Pair<F,S> implements Serializable {
 
     /**
      * The serial version

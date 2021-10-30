@@ -18,6 +18,7 @@ import org.minecraft.entity.Camera;
 import org.minecraft.listener.Keyboard;
 import org.minecraft.listener.Mouse;
 import org.minecraft.loader.Loader;
+import org.minecraft.util.texture.TextureUtils;
 import org.minecraft.util.vector.Vector3f;
 import org.minecraft.world.World;
 import org.minecraft.world.chunk.Chunk;
@@ -57,6 +58,8 @@ public final class Window {
 
     private boolean close = false;
 
+    private volatile List<Block> blocks = new ArrayList<>();
+
     /**
      * The game window
      */
@@ -81,6 +84,8 @@ public final class Window {
 
     public void run() {
         System.out.println("LWJGL " + Version.getVersion() + "!");
+
+        TextureUtils.createTextureAtlas();
 
         init();
         loop();
@@ -262,12 +267,10 @@ public final class Window {
                     }
                 }
             }
-        }).start();
+        }, "Terrain Generator").start();
 
-        glClearColor(0.1f, 0.8f, 1.0f, 1.0f);
+        glClearColor(54 / 256f, 199 / 256f, 242 / 256f, 1.0f);
         glEnable(GL_DEPTH_TEST);
-
-        List<Block> blocks = new ArrayList<>();
 
         int index = 0;
 
@@ -288,7 +291,6 @@ public final class Window {
 
             camera.move();
             Mouse.refresh();
-
 
             for (Block block : blocks) {
                 int dx = (int) Math.abs(block.getPosition().x - camera.getPosition().x);

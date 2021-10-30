@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import org.minecraft.block.Block;
 import org.minecraft.block.BlockModel;
 import org.minecraft.block.BlockTexture;
+import org.minecraft.util.texture.TextureUtils;
 import org.minecraft.util.vector.Vector3f;
 
 import java.io.Serial;
@@ -28,7 +29,7 @@ public final class Dirt extends Block implements Serializable {
      *
      * @see BlockTexture
      */
-    private static final BlockTexture TEXTURE = new BlockTexture("assets/textures/texture.png");
+    private static final BlockTexture TEXTURE = new BlockTexture("assets/textures/test.png");
 
     /**
      * The type of this block.
@@ -50,7 +51,7 @@ public final class Dirt extends Block implements Serializable {
      *
      * @see #INDICES
      */
-    private static final float[] TCS = new float[]{
+    private static final float[] TCS = new float[] {
             //Positive X
             2 / 25f, 0 / 25f,
             2 / 25f, 1 / 25f,

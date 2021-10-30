@@ -79,7 +79,9 @@ public interface BlockI {
      * @return The vertices of this block
      * @author 4347
      */
-    float[] getVertices();
+    default float[] getVertices() {
+        return Block.VERTICES;
+    }
 
     /**
      * Returns the texture coordinates of this block

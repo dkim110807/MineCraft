@@ -150,22 +150,40 @@ public class Block extends GameObject implements BlockI, Serializable {
      */
     protected static final float[] NORMALS = new float[]{
             //Positive X
-            0.5f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
 
             //Negative X
-            -0.5f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
 
             //Positive Y
-            0.0f, 0.5f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
 
             //Negative Y
-            0.0f, -0.5f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
 
             //Positive Z
-            0.0f, 0.0f, 0.5f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
 
             //Negative Z
-            0.0f, 0.0f, -0.5f
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
     };
 
     /**
@@ -648,12 +666,12 @@ public class Block extends GameObject implements BlockI, Serializable {
         new Dirt(0, 0, 0);
     }
 
-    private static final Map<BlockModel,List<Block>> blocks = new HashMap<>();
+    private static final Map<BlockModel, List<Block>> blocks = new HashMap<>();
 
     public static void render(Camera camera) {
         shader.enable();
 
-        shader.setUniform3f("skyColour", 0.5f, 0.5f, 0.5f);
+        shader.setUniform3f("skyColour", 0.753f, 0.847f, 1.0f);
         shader.setUniformMat4f("vw_matrix", MatrixUtils.createViewMatrix(camera));
 
         for (BlockModel model : blocks.keySet()) {
@@ -710,7 +728,12 @@ public class Block extends GameObject implements BlockI, Serializable {
         /**
          * The {@code enum} for block type <b><i>DIRT</i></b>
          */
-        DIRT("minecraft:dirt");
+        DIRT("minecraft:dirt"),
+
+        /**
+         * The {@code enum} for block type <b><i>GRASS</i></b>
+         */
+        GRASS("minecraft:grass");
 
         private static final Map<String, Type> keys = new HashMap<>();
 
