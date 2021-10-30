@@ -1,7 +1,5 @@
 package org.minecraft.util.texture;
 
-import org.minecraft.block.BlockTexture;
-import org.minecraft.texture.Texture;
 import org.minecraft.util.tuple.Pair;
 
 import javax.imageio.ImageIO;
@@ -33,8 +31,12 @@ public final class TextureUtils {
         g2d.setBackground(Color.WHITE);
 
         for (Pair<String, Pair<Integer, Integer>> texture : textures) {
+            //The path of the texture
             String path = texture.first;
+
+            //The x position of the atlas
             int x = texture.second.first * 16;
+            //The y position of the atlas
             int y = texture.second.second * 16;
 
             try {
@@ -46,7 +48,7 @@ public final class TextureUtils {
         }
 
         try {
-            ImageIO.write(atlas, "png", new File("assets/textures/test.png"));
+            ImageIO.write(atlas, "png", new File("assets/textures/atlas.png"));
         } catch (IOException e) {
             System.err.println("Something went wrong while writing atlas texture!");
             e.printStackTrace();

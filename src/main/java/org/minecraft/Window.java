@@ -10,6 +10,7 @@ import org.lwjgl.openal.ALCapabilities;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.Callback;
+
 import org.minecraft.audio.Sound;
 import org.minecraft.block.Block;
 import org.minecraft.block.BlockMesh;
@@ -32,6 +33,9 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.openal.ALC10.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
+
+import static org.minecraft.world.World.CHUNK_SIZE;
+import static org.minecraft.world.World.WORLD_SIZE;
 
 public final class Window {
 
@@ -244,22 +248,24 @@ public final class Window {
 
         new Thread(() -> {
             while (!close) {
-                for (int x = (int) (camera.getPosition().x - World.WORLD_SIZE) / World.CHUNK_SIZE;
-                     x <= (camera.getPosition().x + World.WORLD_SIZE) / World.CHUNK_SIZE; x++) {
-                    for (int z = (int) (camera.getPosition().z - World.WORLD_SIZE) / World.CHUNK_SIZE;
-                         z <= (camera.getPosition().z + World.WORLD_SIZE) / World.CHUNK_SIZE; z++) {
-                        final Vector3f e = new Vector3f(x * World.CHUNK_SIZE, 0, z * World.CHUNK_SIZE);
+                for (int x = (int) (camera.getPosition().x - WORLD_SIZE) / CHUNK_SIZE;
+                     x <= (camera.getPosition().x + WORLD_SIZE) / CHUNK_SIZE; x++) {
+                    for (int z = (int) (camera.getPosition().z - WORLD_SIZE) / CHUNK_SIZE;
+                         z <= (camera.getPosition().z + WORLD_SIZE) / CHUNK_SIZE; z++) {
+                        final Vector3f e = new Vector3f(x * CHUNK_SIZE, 0, z * CHUNK_SIZE);
                         if (!used.contains(e)) {
                             used.add(e);
 
                             List<Block> blocks = new ArrayList<>();
 
-                            for (int i = 0; i < World.CHUNK_SIZE; i++)
-                                for (int j = 0; j < World.CHUNK_SIZE; j++) {
+                            for (int i = 0; i < CHUNK_SIZE; i++)
+                                for (int j = 0; j < CHUNK_SIZE; j++) {
 
-                                    int height = world.getHeightAt(x * World.CHUNK_SIZE + i, z * World.CHUNK_SIZE + j);
+                                    int height = world.getHeightAt(x * CHUNK_SIZE + i, z * CHUNK_SIZE + j);
 
                                     blocks.add(new Dirt(i, height, j));
+                                    blocks.add(new Dirt(i, height - 1, j));
+                                    blocks.add(new Dirt(i, height - 2, j));
                                 }
 
                             meshes.add(new BlockMesh(new Chunk(blocks, e)));
@@ -267,7 +273,7 @@ public final class Window {
                     }
                 }
             }
-        }, "Terrain Generator").start();
+        }, "Terrain Thread").start();
 
         glClearColor(54 / 256f, 199 / 256f, 242 / 256f, 1.0f);
         glEnable(GL_DEPTH_TEST);
@@ -296,7 +302,7 @@ public final class Window {
                 int dx = (int) Math.abs(block.getPosition().x - camera.getPosition().x);
                 int dz = (int) Math.abs(block.getPosition().z - camera.getPosition().z);
 
-                if (dx <= World.WORLD_SIZE && dz <= World.WORLD_SIZE)
+                if (dx <= WORLD_SIZE && dz <= WORLD_SIZE)
                     block.add();
             }
 

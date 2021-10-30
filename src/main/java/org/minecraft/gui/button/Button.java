@@ -2,6 +2,7 @@ package org.minecraft.gui.button;
 
 import org.minecraft.gui.button.event.ButtonEvent;
 import org.minecraft.object.GameObject;
+import org.minecraft.util.vector.Vector2f;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -25,29 +26,22 @@ public class Button extends GameObject implements Serializable {
         buttons.forEach(it -> Button.callEvent(it, event));
     }
 
-    public static boolean callEvent(Button button, ButtonEvent event) {
-        if (!buttons.contains(button))
-            return false;
-
-        callEvent(button.getClass(), event);
-        return true;
-    }
-
-    private static void callEvent(Class<? extends Button> clazz, ButtonEvent event) {
+    private static void callEvent(Button button, ButtonEvent event) {
+        Class<? extends Button> clazz =  button.getClass();
         Method[] methods = clazz.getMethods();
 
         for (Method method : methods) {
             if (method.getParameterCount() > 0 && method.getParameters()[0].getType().equals(event.getClass()))
-                callEvent(method, event);
+                callEvent(button,method, event);
         }
     }
 
-    private static void callEvent(Method method, ButtonEvent event) throws IllegalArgumentException {
+    private static void callEvent(Button button,Method method, ButtonEvent event) throws IllegalArgumentException {
         if (method.getParameterCount() != 1)
             throw new IllegalArgumentException("There is no parameter in method " + method + "!");
 
         try {
-            method.invoke(new ButtonTest(), event);
+            method.invoke(button, event);
         } catch (IllegalArgumentException e) {
             System.err.println("Wrong argument");
             e.printStackTrace();
@@ -57,6 +51,34 @@ public class Button extends GameObject implements Serializable {
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
+    }
+
+    private Vector2f pos;
+    private Vector2f scale;
+    private int texID;
+
+    public Button(Vector2f pos,Vector2f scale,int texID) {
+        this.pos = pos;
+        this.scale = scale;
+        this.texID = texID;
+    }
+
+    public void hide() {
+
+    }
+
+    /**
+     * Show this button on the screen
+     */
+    public void show() {
+
+    }
+
+    /**
+     * Removes this button
+     */
+    public void remove() {
+
     }
 
 }
