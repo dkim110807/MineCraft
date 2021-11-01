@@ -8,7 +8,7 @@ import org.minecraft.util.matrix.MatrixUtils;
 
 import java.util.List;
 
-public class GuiRender {
+public final class GuiRender {
 
     /**
      * The model of the gui

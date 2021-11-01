@@ -10,7 +10,6 @@ import org.lwjgl.openal.ALCapabilities;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.Callback;
-
 import org.minecraft.audio.Sound;
 import org.minecraft.block.Block;
 import org.minecraft.block.BlockMesh;
@@ -19,6 +18,9 @@ import org.minecraft.entity.Camera;
 import org.minecraft.listener.Keyboard;
 import org.minecraft.listener.Mouse;
 import org.minecraft.loader.Loader;
+import org.minecraft.models.TexturedModel;
+import org.minecraft.render.QuadRender;
+import org.minecraft.texture.Texture;
 import org.minecraft.util.texture.TextureUtils;
 import org.minecraft.util.vector.Vector3f;
 import org.minecraft.world.World;
@@ -33,7 +35,6 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.openal.ALC10.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
-
 import static org.minecraft.world.World.CHUNK_SIZE;
 import static org.minecraft.world.World.WORLD_SIZE;
 
@@ -80,18 +81,29 @@ public final class Window {
     }
 
     public static Window get() {
+        //If the window is not initialized
         if (Window.window == null)
+            //Initialize the window
             Window.window = new Window();
 
+        //Returns the game window
         return Window.window;
     }
 
     public void run() {
-        System.out.println("LWJGL " + Version.getVersion() + "!");
+        //Green MineCraft - 4347
+        System.out.println("\033[0;32mMineCraft - 4347\033[0m");
 
+        //Yellow
+        System.out.println("\033[0;33m" + "LWJGL " + Version.getVersion() + "!" + "\033[0m");
+
+        //Creates the texture atlas for better rendering
         TextureUtils.createTextureAtlas();
 
+        //Initialize the GLFW
         init();
+
+        //The game loop
         loop();
 
         //Free the memory
@@ -241,7 +253,6 @@ public final class Window {
         Sound sound = new Sound("assets/sounds/calm3.ogg", true);
         sound.play();
 
-
         World world = new World();
 
         List<Vector3f> used = new ArrayList<>();
@@ -274,6 +285,8 @@ public final class Window {
                 }
             }
         }, "Terrain Thread").start();
+
+        TexturedModel model = new TexturedModel(Loader.loadToVao(vertices,color,textures,indices),new Texture("assets/textures/dirt.png"));
 
         glClearColor(54 / 256f, 199 / 256f, 242 / 256f, 1.0f);
         glEnable(GL_DEPTH_TEST);

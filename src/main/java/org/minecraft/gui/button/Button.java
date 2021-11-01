@@ -53,6 +53,10 @@ public class Button extends GameObject implements Serializable {
         }
     }
 
+    public static void render(List<Button> buttons) {
+
+    }
+
     private Vector2f pos;
     private Vector2f scale;
     private int texID;

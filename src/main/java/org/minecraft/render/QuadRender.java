@@ -13,12 +13,15 @@ public final class QuadRender {
 
     public static final Shader shader = new Shader("assets/shaders/default.vert", "assets/shaders/default.frag");
 
+    private static float z = 0;
+
     public static void render(Camera camera, TexturedModel model) {
+        z -= 0.1f;
         //Bind shader program
         shader.enable();
 
         shader.setUniformMat4f("vw_matrix", MatrixUtils.createViewMatrix(camera));
-        shader.setUniformMat4f("tr_matrix", MatrixUtils.createTransformationMatrix(new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)));
+        shader.setUniformMat4f("tr_matrix", MatrixUtils.createTransformationMatrix(new Vector3f(0, 0, z), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)));
 
         //Bind the vertex array object
         glBindVertexArray(model.getModel().getVaoID());

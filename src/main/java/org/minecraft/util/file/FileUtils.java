@@ -14,9 +14,22 @@ public final class FileUtils {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String buffer = "";
+
             while ((buffer = reader.readLine()) != null) {
-                result.append(buffer + '\n');
+
+                if (buffer.startsWith("#include ")) {
+                    String include = buffer.substring(10, buffer.length() - 1);
+
+                    BufferedReader br = new BufferedReader(new FileReader("assets/shaders/" + include));
+                    String line = "";
+                    while ((line = br.readLine()) != null) {
+                        result.append(line).append('\n');
+                    }
+                } else {
+                    result.append(buffer).append('\n');
+                }
             }
+
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
